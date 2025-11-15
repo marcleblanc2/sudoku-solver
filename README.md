@@ -16,5 +16,5 @@
 
 # Purpose
 
-- To test / validate user experience of cutting edge AI dev tools
+- To test / validate user experience of cutting edge AI dev tools, hopefully on mobile, without having to sit at my desk, or use a computer
 - To understand the code, in a way that I can follow, learn from, and repeat myself manually when playing without running this app
