@@ -1,0 +1,10 @@
+# Builds the image from source.
+# Usage: docker compose -f docker-compose.build.yaml up --build
+services:
+  sudoku-solver:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - LOG_LEVEL=info

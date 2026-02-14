@@ -1,0 +1,10 @@
+# Pulls the pre-built image from GitHub Container Registry.
+# Usage: docker compose up
+services:
+  sudoku-solver:
+    image: ghcr.io/marcleblanc2/sudoku-solver:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - LOG_LEVEL=info

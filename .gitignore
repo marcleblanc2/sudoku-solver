@@ -1,0 +1,8 @@
+# Go binary
+sudoku-solver
+
+# Log file
+sudoku-solver.log
+
+# OS files
+.DS_Store
