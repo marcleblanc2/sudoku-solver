@@ -12,7 +12,7 @@ import (
 
 func TestSetup_DefaultConfig(t *testing.T) {
 	logFile := filepath.Join(t.TempDir(), "test.log")
-	provider, cleanup, err := Setup(context.Background(), Config{
+	provider, _, cleanup, err := Setup(context.Background(), Config{
 		Level:   "info",
 		LogFile: logFile,
 	})
@@ -32,7 +32,7 @@ func TestSetup_DefaultConfig(t *testing.T) {
 
 func TestSetup_QuietMode(t *testing.T) {
 	logFile := filepath.Join(t.TempDir(), "test.log")
-	provider, cleanup, err := Setup(context.Background(), Config{
+	provider, _, cleanup, err := Setup(context.Background(), Config{
 		Level:   "info",
 		Quiet:   true,
 		LogFile: logFile,
@@ -48,7 +48,7 @@ func TestSetup_QuietMode(t *testing.T) {
 }
 
 func TestSetup_NoFileLogging(t *testing.T) {
-	provider, cleanup, err := Setup(context.Background(), Config{
+	provider, _, cleanup, err := Setup(context.Background(), Config{
 		Level:   "info",
 		Quiet:   true,
 		LogFile: "",
@@ -64,7 +64,7 @@ func TestSetup_NoFileLogging(t *testing.T) {
 }
 
 func TestSetup_InvalidLogFilePath(t *testing.T) {
-	_, _, err := Setup(context.Background(), Config{
+	_, _, _, err := Setup(context.Background(), Config{
 		Level:   "info",
 		Quiet:   true,
 		LogFile: "/no/such/directory/test.log",
@@ -76,7 +76,7 @@ func TestSetup_InvalidLogFilePath(t *testing.T) {
 
 func TestSetup_FileReceivesLogs(t *testing.T) {
 	logFile := filepath.Join(t.TempDir(), "test.log")
-	provider, cleanup, err := Setup(context.Background(), Config{
+	provider, _, cleanup, err := Setup(context.Background(), Config{
 		Level:   "info",
 		Quiet:   true,
 		LogFile: logFile,
@@ -104,7 +104,7 @@ func TestSetup_FileReceivesLogs(t *testing.T) {
 
 func TestSetup_SeverityFiltering(t *testing.T) {
 	logFile := filepath.Join(t.TempDir(), "test.log")
-	provider, cleanup, err := Setup(context.Background(), Config{
+	provider, _, cleanup, err := Setup(context.Background(), Config{
 		Level:   "error",
 		Quiet:   true,
 		LogFile: logFile,

@@ -16,7 +16,10 @@
 ## Agent behaviour
 
 - Default to conversation, instead of writing code
-- Propose solutions, and ask the user to pick a solution, before writing code
+  - Propose solutions, and ask the user to pick a solution, before writing code
+- Keep AGENTS.md and README.md up to date, and deduplicated
+  - AGENTS.md for agents
+  - README.md for humans
 - Enforce security best practices
 - Before informing the user that a change is completed:
   - Build, test, and execute the binary to verify the change works
@@ -62,7 +65,13 @@ sudoku-solver/
 - Ensure the app works both as a standalone binary and inside a Docker container
 - Use OpenTelemetry for instrumentation and observability
 - Use the OTel Logs SDK directly for all logging (not `log/slog`)
-- Use wide events for logging, attaching rich attributes to each log record
+- Always prefer OTel SDK primitives over custom implementations; do not build custom wrappers when the SDK already provides the functionality
+- Wide events are implemented as OTel spans, not custom accumulators:
+  - Create a span at the start of execution with `tracer.Start(ctx, "name")`
+  - Add attributes throughout execution with `span.SetAttributes(...)`
+  - Defer `span.End()` so the span is emitted on exit
+  - Pass `ctx` through the call stack; any package can enrich the span via `trace.SpanFromContext(ctx).SetAttributes(...)`
+- `internal/logging.Setup` returns both a `LoggerProvider` and a `TracerProvider`
 - Default logging to both stderr and `sudoku-solver.log` in the current directory
 - `-q` / `--quiet` flag disables stderr logging; `LOG_FILE=""` disables file logging
 

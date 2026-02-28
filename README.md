@@ -1,9 +1,6 @@
 # sudoku-solver
 
-- Solves Sudoku puzzles
-- Written in Go
-- Runs as a standalone binary
-- Released as a Go binary, and a Docker image
+Solves Sudoku puzzles
 
 ## Configure
 
@@ -40,16 +37,17 @@ Install the following before contributing:
 | [Go](https://go.dev/) 1.23+                                          | `brew install go`                | Build and test                  |
 | [Podman](https://podman.io/)                                         | `brew install podman`            | Container builds and runs       |
 | [golangci-lint](https://golangci-lint.run/)                          | `brew install golangci-lint`     | Go linting                      |
-| [vale](https://vale.sh/)                                             | `brew install vale`              | Markdown prose linting          |
+| [vale](https://vale.sh/)                                             | `brew install vale && vale sync` | Markdown prose linting          |
 | [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2) | `brew install markdownlint-cli2` | Markdown formatting and linting |
-
-After cloning, run `vale sync` to download vale style packages.
+| [Tesseract](https://github.com/tesseract-ocr/tesseract)              | `brew install tesseract`         | OCR digit recognition           |
 
 ### Build
 
 Build the CLI binary:
 
 ```sh
+export CGO_CPPFLAGS="-I$(brew --prefix leptonica)/include -I$(brew --prefix tesseract)/include"
+export CGO_LDFLAGS="-L$(brew --prefix leptonica)/lib -L$(brew --prefix tesseract)/lib -lleptonica -ltesseract"
 go build -o sudoku-solver ./cmd/sudoku-solver
 ```
 
@@ -94,14 +92,3 @@ go test ./...
 ## Outputs
 
 - Image of the solved Sudoku puzzle
-
-## Project Structure
-
-```text
-cmd/sudoku-solver/   CLI entrypoint
-internal/solver/     puzzle solving algorithm
-internal/extractor/  image → grid (OCR / image processing)
-internal/renderer/   solved grid → output image
-internal/web/        web UI (Go html/template + static assets)
-testdata/            sample puzzle images for testing
-```

@@ -1,5 +1,5 @@
-# Go binary
-sudoku-solver
+# Go binary (root only, not cmd/sudoku-solver/)
+/sudoku-solver
 
 # Log file
 sudoku-solver.log

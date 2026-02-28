@@ -7,9 +7,11 @@ import (
 	"os"
 	"strings"
 
+	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
+	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 	otellog "go.opentelemetry.io/otel/log"
 	sdklog "go.opentelemetry.io/otel/sdk/log"
-	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
 // Config controls where and at what level logs are emitted.
@@ -19,55 +21,70 @@ type Config struct {
 	LogFile string // path to log file; empty disables file logging
 }
 
-// Setup creates a LoggerProvider with stderr and/or file exporters, filtered
-// to the configured minimum severity. It returns the provider and a cleanup
-// function that shuts everything down.
-func Setup(ctx context.Context, cfg Config) (*sdklog.LoggerProvider, func(), error) {
+// Setup creates a LoggerProvider and TracerProvider with stderr and/or file
+// exporters. Logs are filtered to the configured minimum severity. It returns
+// both providers and a cleanup function that shuts everything down.
+func Setup(ctx context.Context, cfg Config) (*sdklog.LoggerProvider, *sdktrace.TracerProvider, func(), error) {
 	minSev := parseLevel(cfg.Level)
 
-	var processors []sdklog.LoggerProviderOption
+	var logProcessors []sdklog.LoggerProviderOption
+	var traceProcessors []sdktrace.TracerProviderOption
 	var closers []func()
 
 	if !cfg.Quiet {
-		exp, err := stdoutlog.New(stdoutlog.WithWriter(os.Stderr))
+		logExp, err := stdoutlog.New(stdoutlog.WithWriter(os.Stderr))
 		if err != nil {
-			return nil, nil, fmt.Errorf("stderr exporter: %w", err)
+			return nil, nil, nil, fmt.Errorf("stderr log exporter: %w", err)
 		}
-		proc := sdklog.NewSimpleProcessor(exp)
-		processors = append(processors, sdklog.WithProcessor(&filterProcessor{
+		proc := sdklog.NewSimpleProcessor(logExp)
+		logProcessors = append(logProcessors, sdklog.WithProcessor(&filterProcessor{
 			inner:  proc,
 			minSev: minSev,
 		}))
+
+		traceExp, err := stdouttrace.New(stdouttrace.WithWriter(os.Stderr))
+		if err != nil {
+			return nil, nil, nil, fmt.Errorf("stderr trace exporter: %w", err)
+		}
+		traceProcessors = append(traceProcessors, sdktrace.WithSpanProcessor(sdktrace.NewSimpleSpanProcessor(traceExp)))
 	}
 
 	if cfg.LogFile != "" {
 		f, err := os.OpenFile(cfg.LogFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
 		if err != nil {
-			return nil, nil, fmt.Errorf("open log file: %w", err)
+			return nil, nil, nil, fmt.Errorf("open log file: %w", err)
 		}
 		closers = append(closers, func() { f.Close() })
 
-		exp, err := stdoutlog.New(stdoutlog.WithWriter(f))
+		logExp, err := stdoutlog.New(stdoutlog.WithWriter(f))
 		if err != nil {
-			return nil, nil, fmt.Errorf("file exporter: %w", err)
+			return nil, nil, nil, fmt.Errorf("file log exporter: %w", err)
 		}
-		proc := sdklog.NewSimpleProcessor(exp)
-		processors = append(processors, sdklog.WithProcessor(&filterProcessor{
+		proc := sdklog.NewSimpleProcessor(logExp)
+		logProcessors = append(logProcessors, sdklog.WithProcessor(&filterProcessor{
 			inner:  proc,
 			minSev: minSev,
 		}))
+
+		traceExp, err := stdouttrace.New(stdouttrace.WithWriter(f))
+		if err != nil {
+			return nil, nil, nil, fmt.Errorf("file trace exporter: %w", err)
+		}
+		traceProcessors = append(traceProcessors, sdktrace.WithSpanProcessor(sdktrace.NewSimpleSpanProcessor(traceExp)))
 	}
 
-	provider := sdklog.NewLoggerProvider(processors...)
+	logProvider := sdklog.NewLoggerProvider(logProcessors...)
+	traceProvider := sdktrace.NewTracerProvider(traceProcessors...)
 
 	cleanup := func() {
-		_ = provider.Shutdown(ctx)
+		_ = logProvider.Shutdown(ctx)
+		_ = traceProvider.Shutdown(ctx)
 		for _, c := range closers {
 			c()
 		}
 	}
 
-	return provider, cleanup, nil
+	return logProvider, traceProvider, cleanup, nil
 }
 
 // parseLevel maps a string to an OTel log severity, defaulting to Info.
