@@ -2,6 +2,18 @@
 
 ## To Do
 
+- Consider replacing Vale with a simpler spell-checking tool
+  - Vale's shortcomings:
+    - Obtuse useage and config
+    - Lack of single-line suppression
+    - Complex vocabulary management may not be worth it for a Go/shell codebase
+  - Candidates:
+    - [typos](https://github.com/crate-ci/typos) (fast, minimal config, widely used in major OSS)
+    - [cspell](https://github.com/streetsidesoftware/cspell) (per-line suppression, strong VS Code integration)
+    - [codespell](https://github.com/codespell-project/codespell) (simple, standard in Linux/CPython/Go projects)
+  - Trade-offs:
+    - Losing Google style guide enforcement (passive voice, Latin abbreviations, etc.)
+
 - internal/solver/ — Pure algorithm, no external dependencies. Takes a 9x9 grid, returns the solved grid
 - internal/renderer/ — Solved grid → output image. Needs an image generation library.
 - Accept `context.Context` in `solver`, `extractor`, and `renderer` packages; enrich span via `trace.SpanFromContext(ctx)`

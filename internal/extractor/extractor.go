@@ -66,8 +66,8 @@ func Threshold(img *image.Gray, threshold uint8) *image.Gray {
 //
 // Grid lines are identified as rows/columns where black pixels span nearly
 // the full image width/height (>90% density). The grid is bounded by the
-// first and last cluster of such lines, but we stop when a large continuous
-// dark region is found (e.g. a keypad below the grid).
+// first and last cluster of such lines, stopping when a large continuous
+// dark region is found (for example, a keypad below the grid).
 func FindGridBounds(img *image.Gray) (image.Rectangle, error) {
 	bounds := img.Bounds()
 	w := bounds.Dx()
@@ -142,9 +142,9 @@ func FindGridBounds(img *image.Gray) (image.Rectangle, error) {
 
 // findGridLinePositions returns the row indices that are grid lines, filtering
 // out large continuous dark regions (like a keypad) that aren't part of the
-// Sudoku grid. A Sudoku grid has 10 horizontal lines; we identify narrow runs
-// of dark rows as grid lines, and for wider runs (where the bottom border
-// merges with other dark UI), we include only the first few rows.
+// Sudoku grid. A Sudoku grid has 10 horizontal lines; narrow runs
+// of dark rows are identified as grid lines, and for wider runs (where the bottom border
+// merges with other dark UI), only the first few rows are included.
 func findGridLinePositions(proj []int, threshold int) []int {
 	type run struct{ start, end int }
 	var runs []run
@@ -315,7 +315,7 @@ func recognizeCell(client *gosseract.Client, cell image.Image) (int, error) {
 	ih := inner.Dy()
 
 	// Convert the inner region to a "min-channel" grayscale so that
-	// coloured digits (e.g. teal user-filled values) become dark rather
+	// coloured digits (for example, teal user-filled values) become dark rather
 	// than being washed out by standard luminance conversion.
 	total := iw * ih
 	minCh := make([]uint8, total)

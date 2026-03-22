@@ -65,7 +65,7 @@ sudoku-solver/
 - Ensure the app works both as a standalone binary and inside a Docker container
 - Use OpenTelemetry for instrumentation and observability
 - Use the OTel Logs SDK directly for all logging (not `log/slog`)
-- Always prefer OTel SDK primitives over custom implementations; do not build custom wrappers when the SDK already provides the functionality
+- Always prefer OTel SDK primitives over custom implementations; do not build custom wrappers when the SDK already provides the capability
 - Wide events are implemented as OTel spans, not custom accumulators:
   - Create a span at the start of execution with `tracer.Start(ctx, "name")`
   - Add attributes throughout execution with `span.SetAttributes(...)`

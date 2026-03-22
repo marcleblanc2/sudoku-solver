@@ -103,7 +103,7 @@ func parseLevel(s string) otellog.Severity {
 	}
 }
 
-// filterProcessor wraps an sdklog.Processor and drops records below minSev.
+// filterProcessor wraps a log processor and drops records whose severity is below minSev.
 type filterProcessor struct {
 	inner  sdklog.Processor
 	minSev otellog.Severity

@@ -23,7 +23,7 @@ func TestDecodeImage(t *testing.T) {
 }
 
 func TestGrayscale(t *testing.T) {
-	// Create a small colour test image.
+	// Create a small color test image.
 	src := image.NewRGBA(image.Rect(0, 0, 4, 4))
 	src.Set(0, 0, color.RGBA{R: 255, G: 0, B: 0, A: 255})
 	src.Set(1, 0, color.RGBA{R: 0, G: 255, B: 0, A: 255})
@@ -48,10 +48,10 @@ func TestGrayscale(t *testing.T) {
 
 func TestThreshold(t *testing.T) {
 	gray := image.NewGray(image.Rect(0, 0, 4, 1))
-	gray.SetGray(0, 0, color.Gray{Y: 0})   // well below
+	gray.SetGray(0, 0, color.Gray{Y: 0})   // black (0)
 	gray.SetGray(1, 0, color.Gray{Y: 100}) // below 128
-	gray.SetGray(2, 0, color.Gray{Y: 200}) // above 128
-	gray.SetGray(3, 0, color.Gray{Y: 255}) // well above
+	gray.SetGray(2, 0, color.Gray{Y: 200}) // over 128
+	gray.SetGray(3, 0, color.Gray{Y: 255}) // white (255)
 
 	bin := Threshold(gray, 128)
 

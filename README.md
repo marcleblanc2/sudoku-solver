@@ -10,7 +10,7 @@ Configure via environment variables:
 |-------------|----------------------------------------|----------------------|
 | `PORT`      | HTTP listening port                    | `8080`               |
 | `LOG_LEVEL` | Log level (debug, info, warn, error)   | `info`               |
-| `LOG_FILE`  | Log file path (set to `""` to disable) | `sudoku-solver.log`  |
+| `LOG_FILE`  | Log path (set to `""` to turn off)     | `sudoku-solver.log`  |
 
 CLI flags:
 
@@ -76,8 +76,8 @@ go test ./...
 
 - Logging uses the OpenTelemetry Logs SDK directly
 - By default, logs are written to both stderr and `sudoku-solver.log`
-- Use `-q` / `--quiet` to disable stderr output
-- Set `LOG_FILE=""` to disable file logging
+- Use `-q` / `--quiet` to turn off stderr output
+- Set `LOG_FILE=""` to turn off file logging
 
 ## Purpose
 

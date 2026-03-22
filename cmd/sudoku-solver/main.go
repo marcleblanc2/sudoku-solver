@@ -88,7 +88,7 @@ func main() {
 	)
 
 	// TODO: solve the puzzle using ctx
-	// packages can add attributes via trace.SpanFromContext(ctx).SetAttributes(...)
+	// sub-packages can annotate the active span via trace.SpanFromContext
 	_ = ctx
 }
 
