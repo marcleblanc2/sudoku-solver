@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./scripts/build_test_binary.sh)",
+      "Bash(bash scripts/build_test_binary.sh)",
+      "Bash(bash scripts/ci.sh)",
+      "Bash(chmod +x /Users/marc/git/marcleblanc2/sudoku-solver/scripts/ci.sh)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(go version:*)",
+      "Bash(golangci-lint --version)",
+      "Bash(vale --glob='!.vale/**' --minAlertLevel=suggestion .)",
+      "Bash(vale --glob='!.vale/**' . --output line)",
+      "Bash(vale --glob='!.vale/**' .)",
+      "Bash(vale --glob='!.vale/**' cmd/ internal/ scripts/ *.md docker-compose*.yaml)",
+      "Bash(vale --glob='*.go' .)",
+      "Bash(vale cmd/ internal/ scripts/)"
+    ]
+  }
+}
